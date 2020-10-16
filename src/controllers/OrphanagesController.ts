@@ -32,50 +32,32 @@ export default {
             open_on_weekends,
             images
         });
-    
-        try {
-            await orphanagesRepository.save(orphanage);
-        } catch (error) {
-            return response
-                .status(500)
-                .json({message: error.message})
-        }
-    
+
+        await orphanagesRepository.save(orphanage);
         return response
             .status(201)
-            .json(orphanage)
+            .json(orphanage);
+    
     },
 
     async index(_, response: Response) {
         const orphanagesRepository = getRepository(Orphanage);
 
-        try {
-            const orphanages = await orphanagesRepository.find({
-                relations: ['images']
-            });
-            return response
-                .json(orphanagesView.renderMany(orphanages));
-        } catch (error) {
-            return response
-                .status(500)
-                .json({message: error.message});
-        }
+        const orphanages = await orphanagesRepository.find({
+            relations: ['images']
+        });
         
+        return response.json(orphanagesView.renderMany(orphanages));
     },
 
     async show(request: Request, response: Response) {
         const {id} = request.params;
         const orphanagesRepository = getRepository(Orphanage);
 
-        try {
-            const orphanage = await orphanagesRepository.findOneOrFail(id, {
-                relations: ['images']
-            });
-            return response.json(orphanagesView.render(orphanage));
-        } catch (error) {
-            return response
-                .status(500)
-                .json({message: error.message}); 
-        }
+        const orphanage = await orphanagesRepository.findOneOrFail(id, {
+            relations: ['images']
+        });
+
+        return response.json(orphanagesView.render(orphanage));
     }
 }
